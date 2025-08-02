@@ -1,0 +1,65 @@
+<div class="container mx-auto p-6 max-w-4xl">
+  <div class="bg-white rounded-lg shadow-lg p-6">
+    <!-- Header -->
+    <div class="flex justify-between items-center mb-6">
+      <h1 class="text-3xl font-bold text-gray-800">Todo List</h1>
+      <button 
+        (click)="loadTodos()" 
+        class="bg-blue-500 hover:bg-blue-600 text-white px-4 py-2 rounded-lg transition-colors"
+        [disabled]="loading">
+        <span *ngIf="!loading">Refresh</span>
+        <span *ngIf="loading" class="flex items-center">
+          <svg class="animate-spin -ml-1 mr-2 h-4 w-4 text-white" xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24">
+            <circle class="opacity-25" cx="12" cy="12" r="10" stroke="currentColor" stroke-width="4"></circle>
+            <path class="opacity-75" fill="currentColor" d="M4 12a8 8 0 018-8V0C5.373 0 0 5.373 0 12h4zm2 5.291A7.962 7.962 0 014 12H0c0 3.042 1.135 5.824 3 7.938l3-2.647z"></path>
+          </svg>
+          Loading...
+        </span>
+      </button>
+    </div>
+
+    <!-- Stats -->
+    <div *ngIf="todos" class="bg-gray-50 rounded-lg p-4 mb-6">
+      <div class="flex justify-between text-sm text-gray-600">
+        <span>Total Todos: <strong class="text-gray-800">{{ getTotalCount() }}</strong></span>
+        <span>Completed: <strong class="text-green-600">{{ getCompletedCount() }}</strong></span>
+        <span>Remaining: <strong class="text-orange-600">{{ getTotalCount() - getCompletedCount() }}</strong></span>
+      </div>
+    </div>
+
+    <!-- Loading State -->
+    <div *ngIf="loading" class="text-center py-8">
+      <div class="animate-spin rounded-full h-12 w-12 border-b-2 border-blue-500 mx-auto mb-4"></div>
+      <p class="text-gray-600">Loading todos...</p>
+    </div>
+
+    <!-- Error State -->
+    <div *ngIf="error" class="bg-red-50 border border-red-200 rounded-lg p-4 mb-6">
+      <div class="flex items-center">
+        <svg class="h-5 w-5 text-red-400 mr-2" viewBox="0 0 20 20" fill="currentColor">
+          <path fill-rule="evenodd" d="M10 18a8 8 0 100-16 8 8 0 000 16zM8.707 7.293a1 1 0 00-1.414 1.414L8.586 10l-1.293 1.293a1 1 0 101.414 1.414L10 11.414l1.293 1.293a1 1 0 001.414-1.414L11.414 10l1.293-1.293a1 1 0 00-1.414-1.414L10 8.586 8.707 7.293z" clip-rule="evenodd" />
+        </svg>
+        <p class="text-red-700">{{ error }}</p>
+      </div>
+    </div>
+
+    <!-- Todo List -->
+    <div *ngIf="todos && !loading" class="space-y-3">
+      <div 
+        *ngFor="let todo of todos; trackBy: trackByFn" 
+        class="bg-white border border-gray-200 rounded-lg p-4 hover:shadow-md transition-shadow cursor-pointer"
+        >
+        <app-todo [todo]="todo" (newItemEvent)="toggleTodo($event)"></app-todo>
+      </div>
+    </div>
+
+    <!-- Empty State -->
+    <div *ngIf="todos && todos.length === 0 && !loading" class="text-center py-8">
+      <svg class="mx-auto h-12 w-12 text-gray-400" stroke="currentColor" fill="none" viewBox="0 0 48 48">
+        <path d="M28 8H12a4 4 0 00-4 4v20m32-12v8m0 0v8a4 4 0 01-4 4H12a4 4 0 01-4-4v-4m32-4l-3.172-3.172a4 4 0 00-5.656 0L28 28M8 32l9.172-9.172a4 4 0 015.656 0L28 28m0 0l4 4m4-24h8m-4-4v8m-12 4h.02" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" />
+      </svg>
+      <h3 class="mt-2 text-sm font-medium text-gray-900">No todos found</h3>
+      <p class="mt-1 text-sm text-gray-500">There are no todos to display at the moment.</p>
+    </div>
+  </div>
+</div>

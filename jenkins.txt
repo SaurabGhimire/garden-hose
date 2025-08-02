@@ -1,0 +1,7 @@
+docker run -d -p 8080:8080 -p 50000:50000 --name myjenkins jenkins/jenkins:latest
+// the problem with this is it does not use same machine
+docker run -u 0 --privileged --name jenkins -it -d -p 8080:8080 -p 50000:50000 \
+-v /var/run/docker.sock:/var/run/docker.sock \
+-v $(which docker):/usr/bin/docker \
+-v /home/jenkins_home:/va/jenkins_home \
+jenkins/jenkins:latest

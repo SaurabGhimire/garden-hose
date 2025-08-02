@@ -6,19 +6,20 @@
       "type": "npm",
       "script": "start",
       "isBackground": true,
-      "problemMatcher": {
-        "owner": "typescript",
-        "pattern": "$tsc",
-        "background": {
-          "activeOnStart": true,
-          "beginsPattern": {
-            "regexp": "(.*?)"
-          },
-          "endsPattern": {
-            "regexp": "bundle generation complete"
-          }
-        }
-      }
+      "problemMatcher": "$tsc-watch"
+      // "problemMatcher": {
+      //   "owner": "typescript",
+      //   "pattern": "$tsc",
+      //   "background": {
+      //     "activeOnStart": true,
+      //     "beginsPattern": {
+      //       "regexp": "(.*?)"
+      //     },
+      //     "endsPattern": {
+      //       "regexp": "bundle generation complete"
+      //     }
+      //   }
+      // }
     },
     {
       "type": "npm",
@@ -37,6 +38,7 @@
           }
         }
       }
-    }
+    },
+    
   ]
 }

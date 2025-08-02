@@ -1,0 +1,146 @@
+Angular Official Website
+
+Angular Interpolation - {{}}
+
+Control Flow in Statements - Angular Template Syntax - @if, @else (v16 and older - *ngIf), 
+
+Control Flow in Components - @for (os of operatingSystems; track [os.id](http://os.id/)) *ngFor in v16
+
+Property Binding - [  ]
+
+input<number>();
+
+output<number>(); <app-child (addItemEvent)="addItem($event)" />
+
+Deferrable Views - @defer Loading only on viewport (@defer, @placeholder, @loading(minimum 2s)
+
+NgOptimized Image - ngSrc, imports(NgOptimizedImage), height, width, fill, priority, provideImgixLoader
+---
+ROUTER:
+export const routes: Routes = [
+  {
+    path: '',
+    title: 'App Home Page',
+    component: Home,
+  },
+];
+export const appConfig: ApplicationConfig = {
+providers: [provideRouter(routes)],
+};
+<router-outlet />
+imports: [RouterOutlet],
+<a routerLink="/user">User</a>
+imports: [RouterLink, RouterOutlet],
+---
+Forms
+<label for="framework">
+    Favorite Framework:
+    <input id="framework" type="text" [(ngModel)]="favoriteFramework" />
+</label>
+<button (click)="showFramework()">Show Framework</button>
+showFramework() {
+    alert(this.favoriteFramework);
+  }
+import {Component} from '@angular/core';
+import { ReactiveFormsModule, FormControl, FormGroup} from '@angular/forms';
+@Component({
+  selector: 'app-root',
+  template: `
+    <form [formGroup]="profileForm" (ngSubmit)="handleSubmit()">
+    <h2>Profile Form</h2>
+    <p>Name: {{profileForm.value.name}}</p>
+    <p>Email: {{profileForm.value.email}}</p>
+      <label>
+        Name 
+        <input type="text" formControlName="name" />
+      </label>
+      <label>
+        Email
+        <input type="email" formControlName="email" />
+      </label>
+      <button type="submit">Submit</button>
+    </form>
+  `,
+  imports: [ReactiveFormsModule],
+})
+export class App {
+  profileForm = new FormGroup({
+    name: new FormControl(''),
+    email: new FormControl('')
+  });
+  handleSubmit(){
+    alert(
+      this.profileForm.value.name + ' | '+this.profileForm.value.email
+    );
+  }
+}
+---
+Validating Forms
+import {Component} from '@angular/core';
+import {FormGroup, FormControl} from '@angular/forms';
+import {ReactiveFormsModule, Validators} from '@angular/forms';
+@Component({
+  selector: 'app-root',
+  template: `
+    <form [formGroup]="profileForm">
+      <input type="text" formControlName="name" name="name" />
+      <input type="email" formControlName="email" name="email" />
+      <button type="submit" [disabled]="!profileForm.valid">Submit</button>
+    </form>
+  `,
+  imports: [ReactiveFormsModule],
+})
+export class App {
+  profileForm = new FormGroup({
+    name: new FormControl('', Validators.required),
+    email: new FormControl('', [Validators.required, Validators.email]),
+  });
+}
+---
+Injectable Service
+Consider dependency injection to be the ability for Angular to provide resources you need for your application at runtime. A dependency could be a service or some other resources.
+@Injectable({
+  providedIn: 'root'
+})
+export class CarService {}
+carService = inject(CarService);
+app.ts -> display = this.carService.getCars().join(' x ');
+---
+Pipes
+edit
+Pipes are functions that are used to transform data in templates. In general, pipes are "pure" functions that don't cause side effects. Angular has a number of helpful built-in pipes you can import and use in your components. You can also create a custom pipe.
+template: `{{ loudMessage | lowercase }}`,
+imports: [LowerCasePipe],
+Formatting data with pipes
+{minIntegerDigits}.{minFractionDigits}-{maxFractionDigits}
+<li>Number with "decimal" {{ num | number:"3.2-2" }}</li>
+<li>Date with "date" {{ birthday | date: 'medium' }}</li>
+<li>Currency with "currency" {{ cost | currency }}</li>
+imports: [DecimalPipe, DatePipe, CurrencyPipe],
+Custom Pipe
+The StarPipe accepts a string value and returns that string with stars around it.
+@Pipe({
+  name: 'reverse'
+})
+export class ReversePipe implements PipeTransform {
+  transform(value: string): string {
+    let reverse = '';
+    for(let i=value.length - 1;i>=0;i--){
+      reverse += value[i];
+    }
+    return reverse;
+  }
+}
+<p>Reverse Machine: {{ word | reverse }}</p>
+imports: [ReversePipe],
+---
+RxJS
+this.form.valueChanges
+    .pipe(
+        map((value) => {
+            value.firstName = value.firstName.toUpperCase();
+            return value;
+        }),
+        filter((value) => this.form.valid)
+    )
+    .subscribe(validValue => ...);

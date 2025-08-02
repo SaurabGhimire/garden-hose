@@ -1,0 +1,476 @@
+Angular
+    TypeScript, OpenSource, Web-Mobile-Desktop, DependencyInjection, EndToEnd Tooling, DeclarativeTemplates
+AngularJs vs Angular
+    v1+ vs v2+, MVC Archteture vs Service/Controller, TypeScript, ComponentBased, SEO-friendly
+TypeScript
+    strongly typed, optional types, classes, async/await, compiles to plain JavaScript
+Pictorial Diagram of Angular
+    Component, Template, Two-way Binding, Metadata, Injector, Directive, Modules
+Components
+    Building blocks, control HTML views, tree, 
+Modules
+    logical, separate functionality, @NgModule, set of angular basic building blocks(components, directives, services), imports(BrowserModule), declarations(Components), bootstrap(which comp), providers(injectables)
+Templates
+    HTML views, binding, url vs inline, templateUrl/template
+Services
+    shared
+Metadata
+    data to Angular Class, decorators, declarative, what to do, compile templates, inject dependencies and wire up event listeners and DOM bindings
+Directives
+    add behaviour to existing DOM elements/component instance
+    Components(Directives with Templates), Structural(DOM layout), Attribute(change appearance/behaviour of element, component or another directive)
+Component vs Directive
+    component = directive-with-a-template, @View/templateUrl/template
+Data Binding
+    Source to View (Interpolation, Property, Attribute, Class, Style), Event, Two-way
+LifeCycle Hooks
+    ngOnChanges(when data bound property changes), ngOnInit(initialization of directive/component), ngDoCheck(detection and act on changes that Angular can't/won't detect), ngAfterContentInit(called in response after external components projected into the component), ngAfterContentChecked(called in response after Angular checks the content projected into the component), ngAfterViewInit(called in response after Angular initializes the component's views and child views), ngAfterViewChecked(called in response after Angular checks the component's views and child views), ngOnDestroy(called before Angular destroys the directive/component)
+| Hook                      | Called When                   | Summary (3–4 words)     |
+| ------------------------- | ----------------------------- | ----------------------- |
+| `constructor`             | When class is instantiated    | Create object instance, Prepare internal variables  |
+| `ngOnChanges()`           | On @Input() change            | Input property changed, React to @Input() changes, React to parent input changes  |
+| `ngOnInit()`              | After first ngOnChanges       | Component initialized, Run initialization logic, Fetch data from API   |
+| `ngDoCheck()`             | During every change detection | Custom change detection, Custom change detection (rare) |
+| `ngAfterContentInit()`    | After projecting content      | Content initialized , Projected content ready (<ng-content>)    |
+| `ngAfterContentChecked()` | After every content check     | Content re-checked      |
+| `ngAfterViewInit()`       | After view initialized        | View initialized, View children ready (@ViewChild), Access @ViewChild() DOM        |
+| `ngAfterViewChecked()`    | After every view check        | View re-checked         |
+| `ngOnDestroy()`           | Before component destroyed    | Cleanup before destroy, Unsubscribe/clean up timers, etc., Unsubscribe from observables  |
+Metadata
+    class decorators(@Component, @NgModule), property decorators(@Input, @Output), Method decorators(@HostListener), Parameter decorators(@Inject, @Optional)
+Angular CLI
+Constructor vs ngOnInit
+    class instantiated(only initialization, insitialize fields, subclasses, DI) vs lifeCycleHooks(where components' bindings are resolved)
+Service
+    common functionality, reuse, better modularity, separtion of concerns, Http Service
+DI
+    application design pattern, class asks for dependencies from external sources, instantiation
+DI Hierarchy
+    Module Injector(Root), PlatformModule(above root injector, created by platform browser, features like DomSanitizer), NullInjector(throw error unless @Optional) [(bottom) ElementInjector(@Component, @Directive) -> Root ModuleInjector(AppModule) -> ModuleInjector(platformBrowser()) -> NullInjector (top)]
+async pipe
+    subscribes to observable/promise, returns latest value emitted {{ time | async }} time:Observable<string>;
+    @Component({
+    selector: 'async-observable-pipe',
+    template: `<div><code>observable|async</code>:
+        Time: {{ time | async }}</div>`
+    })
+    export class AsyncObservablePipeComponent {
+    time: Observable<string>;
+    constructor() {
+        this.time = new Observable((observer) => {
+        setInterval(() => {
+            observer.next(new Date().toString());
+        }, 2000);
+        });
+    }
+    }
+Inline vs External Template file
+*ngFor Directive
+    <li *ngFor="let user of users">
+*ngIf
+    <p *ngIf="user.age > 18">You are not eligible for student pass!</p>
+Script tag inside template
+    Angular recognizes the value as unsafe and automatically sanitizes it, script injection attacks, reduce risk
+Interpolation
+    special syntax that Angular converts into property binding, alternative to property binding
+    <img src="{{url}}" style="height:30px">{{title}}
+Template Expressions
+    produces a value similar to any Javascript expression, [property]="expression". Angular executes the expression and assigns it to a property of a binding target.  In the property binding, a template expression appears in quotes to the right of the = symbol as in [property]="expression". In interpolation syntax, the template expression is surrounded by double curly braces. The below javascript expressions are prohibited in template expression : assignments (=, +=, -=, ...), new, chaining expressions with ; or , , increment and decrement operators (++ and --) 
+Template Statements
+    A template statement responds to an event raised by a binding target. appers in quotes to the right of the = symbol. (event)="statement". same as above cannot add
+Pipes
+    simple functions, use template expressions, accept data as input, trasform it {{birthday | date}}
+Parameterized Pipe
+    accept any no. of optional parameters {{birthday | date:'dd/MM/yyyy'}}. The parameter value can be any valid template expression, such as a string literal or a component property.
+Chain Pipes
+    {{birthday | date:'fullDate' | uppercase}}
+Custom Pipes
+    @Pipe decorator, PipeTransform interface("transform(value:any, ...args: any[]):any" ), 
+    import { Pipe, PipeTransform } from '@angular/core';
+    @Pipe({name: 'customFileSizePipe'})
+    export class FileSizePipe implements PipeTransform {
+        transform(size: number, extension: string = 'MB'): string {
+            return (size / (1024 * 1024)).toFixed(2) + extension;
+        }
+    }
+Pure vs Impure Pipe
+    called only when Angular detects change in value/parameters passed to a pipe vs every change detection cycle(eg: every keystroke or mouse-move)
+Bootstrapping Module
+    root module, bootstrap to launch app, default AppModule
+Observables
+    declarative, passing msgs betn publishers and subscribers, (usecase : event handling, async programming, handling multiple values), cold vs hot, not executed unless a consumer subscribes to it.
+HttpClient
+    XMLHttpRequest interface vs fetch() api. simplified client based on top of "XMLHttpRequest", @angular/common/http, (testability, typed request/response objects, intercept request/response, support observables API, Streamlined Error Handling)
+    imports [HttpClientModule],
+    UserProfileService -> getUserProfile() {
+        return this.http.get(this.userProfileUrl); //returns Observable<JSON data>
+    }
+    fetchUserProfile() {
+        this.userProfileService.getUserProfile()
+            .subscribe((data: User) => this.user = {
+                id: data['userId'],
+                name: data['firstName'],
+                city:  data['city']
+        });
+    }
+Read full Response
+    this.http.get<User>(this.userUrl, { observe: 'response' }); // returns Observable<HttpReponse>
+Error Handling
+    Passing Error Object as a second callback to subscribe() method
+    .subscribe(
+      (data: User) => this.userProfile = { ...data }, // success path
+      error => this.error = error // error path
+    );
+RxJs
+    library, composing async and callback-based code, functional and reactive sytles, using Observables
+Subscribing
+    Observable instance begins publishing values only when someone subscribes to it.
+    const source = range(1,5);
+    const observer = {
+        next: x => console.log('Observer got a next value: ' + x),
+        error: err => console.log('Observer got an error: ' + err),
+        complete: () => console.log('Observer got a complete notification'),
+    }
+    source.subscribe(observer);
+Observable
+    unique Object, similar to Promise, manage async code, not part of JS, RxJS library, created using new 
+    import { Observable } from 'rxjs';
+    const observable = new Observable(observer => {
+        setTimeout(() => {
+            observer.next('Hello from a Observable!');
+        }, 2000);
+    });
+Observer
+    interface for a consumer of push-based notifications delivered by an Observable
+    interface Observer<T> {
+        closed?: boolean;
+        next: (value: T) => void;
+        error: (err: any) => void;
+        complete: () => void;
+    }
+    A handler that implements the Observer interface for receiving observable notifications will be passed as a parameter for observable as below :: myObservable.subscribe(myObserver);
+Promise vs Observable
+    executes immediately on creation vs only when subscribed, multiple values, only .then() clause vs chainging and subscription to handle complex applications
+Multicasting
+    broadcasting to multiple subscribers in a single execution
+    var source = Rx.Observable.from([1, 2, 3]);
+    var subject = new Rx.Subject();
+    var multicasted = source.multicast(subject);
+    // These are, under the hood, `subject.subscribe({...})`:
+    multicasted.subscribe({
+        next: (v) => console.log('observerA: ' + v)
+    });
+    multicasted.subscribe({
+        next: (v) => console.log('observerB: ' + v)
+    });
+    // This is, under the hood, `s
+Error Handling
+    try/catch not effective, use error callback
+shorthand notation for subscribe method
+    positional arguments, (next, error, complete)
+    myObservable.subscribe(
+        x => console.log('Observer got a next value: ' + x),
+        err => console.error('Observer got an error: ' + err),
+        () => console.log('Observer got a complete notification')
+    );
+RxJS utility functions
+    async operations into observables, iterate values in a stream, mapping to diff types, filtering, composing multiple streams
+Observable Creating Functions
+    from promises, events, timers & Ajax requests.
+    const data = from(fetch('/api/endpoint')); // promises
+    const el = document.getElementById('custom-element'); //events
+    const mouseMoves = fromEvent(el, 'mousemove');
+    const secondsCounter = interval(1000); // timers
+    import { ajax } from 'rxjs/ajax'; // ajax function
+    const apiData = ajax('/api/data'); 
+What happen when handler not supplied
+    ignores (next, error, complete)
+Angular Elements
+    Angular Elements allow Angular components to be packaged as standalone Web Components. Perfect for framework-agnostic integrations. Built
+    Integrating with legacy apps, Building micro frontends
+    import { Injector, NgModule } from '@angular/core';
+    import { createCustomElement } from '@angular/elements';
+    import { MyButtonComponent } from './my-button.component';
+    @NgModule({
+        declarations: [MyButtonComponent],
+        imports: [BrowserModule],
+        entryComponents: [MyButtonComponent]
+    })
+    export class AppModule {
+    constructor(private injector: Injector) {
+        const el = createCustomElement(MyButtonComponent, { injector });
+        customElements.define('my-button', el);  // <my-button></my-button>
+    }
+    ngDoBootstrap() {}
+    }
+    This turns your Angular component into <my-button></my-button> which you can use even in a plain HTML file.
+BrowserSupport of Angular Elements
+    not firefox, edge in progress, chrome-opera-safari supported
+Custom Elements
+    web platfrom feature, extends HTML, allowowing you to define a tag whose content is created and controlled by Javascript Code. CustomElementRegistry. (available in unsupported browser by polyfills)
+    bootstraps automatically when added to DOM
+Internal working of Custom Elements
+    app registers custom element with browser(createCustomElement()), adds custom element to DOM like built-in HTML, browser instantiate compoenent based class, instance provides content with data binding and change detection (Ref Image. Q.N 55)
+Transfer Components to Custom Elements
+    Angular provides createCustomElement, Converted using NgElementConstructor interface, Register element class with browser(customElements.define() with browser's CustomElementRegistry) (pic Q.N. 56)
+Mapping Rules betn Angular compoenent and custom element
+    createCustomElement() api parses input properties with corr attributes for custom element, @Input('myInputProp') => element attribute my-input-prop. outputs dispatched as HTML Custom Events. @Output() valueChanged = new EventEmitter() -> custom element with dispatch event as "valueChanged"
+Typings for Custom elements
+    NgElement, WithProperties types exported from @angular/elements
+    @Component(...)
+    class MyContainer {
+        @Input() message: string;
+    }
+    After applying types typescript validates input value and their types,
+    const container = document.createElement('my-container') as NgElement & WithProperties<{message: string}>;
+    container.message = 'Welcome to Angular elements!';
+    container.message = true;  // <-- ERROR: TypeScript knows this should be a string.
+    container.greet = 'News';  // <-- ERROR: TypeScript knows there is no `greet` property on `container`.
+Dynamic Components
+    component's location in app is not defined at build time, insteat componenet instantiated and placed in the app at runtime
+Directives
+    Components, Structural, Attribute
+    ElementRef in the directive's constructor to inject a reference to the host DOM element
+    import { Directive, ElementRef } from '@angular/core';
+    @Directive({
+    selector: '[appHighlight]'
+    })
+    export class HighlightDirective {
+        constructor(el: ElementRef) {
+        el.nativeElement.style.backgroundColor = 'red';
+        }
+    }
+    <p appHighlight>Highlight me!</p>
+Angular Router
+    @angular/router
+    navigation from one view to next, SPA with multiple views, allow navigation between these views
+HRef
+    <base href="/">
+Router Outlet
+    directive from router library, acts as placeholder, marks the spot in the template where the router should display componenets for that outlet
+Router Links
+    directive on anchor tags, give the router control over those elements
+    <h1>Angular Router</h1>
+    <nav>
+        <a routerLink="/todosList" routerLinkActive="active">List of todos</a>
+        <a routerLink="/completed" routerLinkActive="active">Completed todos</a>
+    </nav>
+    <router-outlet></router-outlet>
+Active Router Links
+    'routerLinkActive' directive, toggles css classes for active RouterLink bindings based on current RouterState
+Router State
+    tree of activated routes. "consumed" URL segments, extracted parameters and the resolved data
+    @Component({templateUrl:'template.html'})
+    class MyComponent {
+        constructor(router: Router) {
+            const state: RouterState = router.routerState;
+            const root: ActivatedRoute = state.root;
+            const child = root.firstChild;
+            const id: Observable<string> = child.params.map(p => p.id);
+            //...
+        }
+    }
+Router Events
+    Each navigation, Router emits navigation events through Router.events property, track lifecycle of the route
+    The sequence of router events is :NavigationStart,RouteConfigLoadStart,RouteConfigLoadEnd,RoutesRecognized,GuardsCheckStart,ChildActivationStart,ActivationStart,GuardsCheckEnd,ResolveStart,ResolveEnd,ActivationEnd,ChildActivationEnd,NavigationEnd,NavigationCancel,NavigationError,Scroll
+Activated Route
+    contains info about a route associated with a component loaded in an outlet, traverse router state tree. injected as router service to acces info
+    @Component({...})
+    class MyComponent {
+        constructor(route: ActivatedRoute) {
+            const id: Observable<string> = route.params.pipe(map(p => p.id));
+            const url: Observable<string> = route.url.pipe(map(segments => segments.join('')));
+            // route.data includes both `data` and `resolve`
+            const user = route.data.pipe(map(d => d.user));
+        }
+    }
+Route Defination
+     const appRoutes: Routes = [
+        { path: 'todo/:id',      component: TodoDetailComponent },
+        {
+            path: 'todos',
+            component: TodosListComponent,
+            data: { title: 'Todos List' }
+        },
+        { path: '',
+            redirectTo: '/todos',
+            pathMatch: 'full'
+        },
+        { path: '**', component: PageNotFoundComponent }
+    ];
+    RouterModule.forRoot(
+      appRoutes,
+      { enableTracing: true } // <-- debugging purposes only
+    )
+Wildcard Route
+    match every URL, PageNotFoundComponent
+Routing module always needed?
+    No. Design Choice. Guard?, Resolver?
+Angular Universal
+    server-side rendering module for Ang. apps in various scenarios. @angular/platform-server
+Compilation Types
+    why? -> Browser does not understand Angular components/templates directly. covert TypeScript to efficient JS code
+    Just In Time(JIT)
+        compiles app in the browser, at runtime. default until Angular 8
+    Ahead of Time(AOT)
+        compiles app at build time. default true in recent versions ng build --aot true/false
+    Advantages - Faster rendering, fewer async requests(inlines external HTML templates and CSS style sheets->eliminates separate ajax requests), smaller Angular framework download size(no compiler download needed), detect template binding errors earlier, better security(no injection attacks)
+Ways to control AOT compilation
+    1. template compiler options in tsconfig.json, 2. configuring Angular metadata with decorators
+Restrictions of Metadata
+    expression syntax(js compatible), compiler can only reference symbols which are exported, only call functions supported by compiler, decorated and data-bound class members must be public
+3 phases of AOT
+    code analysis(compiler records a representation of the source), code generation(interpretation as well as places restrictions on what it interprets), validation(Angular template compiler uses TS compiler to validate the binding expressions in templates)
+Arrow functions/Lambda functions in AOT allowed? but later versions?
+    no. 
+    -- Invalid
+    @Component({
+        providers: [{
+            provide: MyService, useFactory: () => getService()
+        }]
+    })
+    -- Valid
+    function getService(){
+    return new MyService();
+    }
+    @Component({
+        providers: [{
+            provide: MyService, useFactory: getService
+        }]
+    })
+Purpose of metadata json files
+    diagram of overall structure of a decorator's metadata, represented as an abstract syntax tree(AST). During the analysis phase, the AOT collector scan the metadata recorded in the Angular decorators and outputs metadata information in .metadata.json files, one per .d.ts file.
+Can I use any javascript feature for expression syntax in AOT?
+    No, the AOT collector understands a subset of (or limited) JavaScript features. If an expression uses unsupported syntax, the collector writes an error node to the .metadata.json file. Later point of time, the compiler reports an error if it needs that piece of metadata to generate the application code.
+Folding
+    The compiler can only resolve references to exported symbols in the metadata. Where as some of the non-exported members are folded while generating the code. i.e Folding is a process in which the collector evaluate an expression during collection and record the result in the .metadata.json instead of the original expression. For example, the compiler couldn't refer selector reference because it is not exported
+    let selector = 'app-root';
+    @Component({
+        selector: selector
+    })
+    will be folded into inline selector
+    @Component({
+      selector: 'app-root'
+    })
+    Remember that the compiler can’t fold everything. For example, spread operator on arrays, objects created using new keywords and function calls.
+Macros
+    The AOT compiler supports macros in the form of functions or static methods that return an expression in a single return expression
+    export function wrapInArray<T>(value: T): T[] {
+        return [value];
+    }
+    You can use it inside metadata as an expression,
+    @NgModule({
+        declarations: wrapInArray(TypicalComponent)
+    })
+    export class TypicalModule {}
+    The compiler treats the macro expression as it written directly
+    @NgModule({
+        declarations: [TypicalComponent]
+    })
+    export class TypicalModule {}
+Example of metadata errors
+    Expression form not supported - 
+        1. export class User { ... }
+        const prop = typeof User; // typeof is not valid in metadata
+        2. { provide: 'token', useValue: { [prop]: 'value' } }; // bracket notation is not valid in metadata
+    Reference to a local(non=-exported) symbol
+        // ERROR
+        let username: string; // neither exported nor initialized
+        @Component({
+            selector: 'my-component',
+            template: ... ,
+            providers: [
+                { provide: User, useValue: username }
+            ]
+        })
+        export class MyComponent {}
+        Fix by either exporting or initializing the value:
+        export let username: string; // exported
+        (or)
+        let username = 'John'; // initialized
+    Function calls are not supported { provide: MyStrategy, useFactory: function() { ... } }, fix this with exported function
+    Destructure variable or constant not supported - const {name, age} = user; {provide: Name, useValue: name},
+Metadata Rewiring
+    compiler converts the expression initializing the fields such as useClass, useValue, useFactory, and data into an exported variable, which replaces the expression
+    .js file not in .d.ts file
+Configuration Inheritance
+    through extends in ts.config.json
+    {
+        "extends": "../tsconfig.base.json",
+        "compilerOptions": {
+            "experimentalDecorators": true,
+            ...
+        },
+        "angularCompilerOptions": {
+            "fullTemplateTypeCheck": true,
+            "preserveWhitespaces": true,
+            ...
+        }
+    }
+Specify Angular Template Compiler Options
+    as members of the angularCompilerOptions object in the tsconfig.json file
+    {
+        "compilerOptions": {
+            "experimentalDecorators": true,
+                    ...
+        },
+        "angularCompilerOptions": {
+            "fullTemplateTypeCheck": true,
+            "preserveWhitespaces": true,
+                    ...
+        }
+    }
+Enable binding expression validation
+    angularCompilerOptions: "fullTemplateTypeCheck" detects type errors
+any type cast function
+    disable binding expression type checking with $any() type cast function
+    template:
+        '{{ $any(user).contacts.email }}',    '{{ $any(this).contacts.email }}' //also works with this
+Non Null Type Assertion Operator
+    user?: User; 
+    user!
+Type Narrowing
+    <span *ngIf="user"> {{user.contact.email}} </span>
+Describe Dependencies in angular app
+    Angular Packages(begins with @angular/), Support Packages(3rd party), Polyfill Packages(plug gaps in browser's JS implementation)
+Zone
+    execution context that persists across async tasks, Angular relies on zone.js to run Angular's change detection processes when native js operations raise events
+Common Module Purpose
+    commonly needed services, pipes, directives, @angular/common (@angular/common/http)
+Codelyzer
+    provides set of tslint rules for static code analysis of Angular TS Projects.
+    ng new codelyzer, ng lint
+Angular Animation
+Web Worker
+inject dymamic script in Angular
+service worker
+token injection
+ivy preview
+angular language service
+Builder function, browerBuilder, KarmaBuilder
+DI Token, InjectionToken
+Angular DSL domain specific language
+RxJs Subject
+    special type of observable that allows values to be multicased to many observers
+    const subject = new Subject<number>();
+    subject.subscribe({
+        next: (v) => console.log(`observerA: ${v}`)
+    });
+    subject.subscribe({
+        next: (v) => console.log(`observerB: ${v}`)
+    });
+    subject.next(1);
+    subject.next(2);
+Bazel Tool
+Platform in Angular 
+    context in which Angular application runs
+    web browser, server, mobile, (platform-browser, platform-server)
+Select an element with in a component template?
+    @ViewChild - define view child directive and access it in ngAfterViewInit lifecycle hook
+    <input #uname>
+    @ViewChild('uname') input;
+    ngAfterViewInit() {
+        console.log(this.input.nativeElement.value);
+    }
+Detect route change in Angular
+138
