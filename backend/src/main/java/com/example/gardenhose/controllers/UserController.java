@@ -1,6 +1,7 @@
 package com.example.gardenhose.controllers;
 
 import com.example.gardenhose.entity.AuthRequest;
+import com.example.gardenhose.entity.SignupRequest;
 import com.example.gardenhose.entity.UserInfo;
 import com.example.gardenhose.services.JwtService;
 import com.example.gardenhose.services.UserInfoDetails;
@@ -16,9 +17,9 @@ import org.springframework.web.bind.annotation.*;
 @RequestMapping("/auth")
 @RequiredArgsConstructor
 public class UserController {
-  private UserInfoService userInfoService;
-  private JwtService jwtService;
-  private AuthenticationManager authenticationManager;
+  private final UserInfoService userInfoService;
+  private final JwtService jwtService;
+  private final AuthenticationManager authenticationManager;
 
   @GetMapping("/welcome")
   public String welcome(){
@@ -26,8 +27,8 @@ public class UserController {
   }
 
   @PostMapping("/addNewUser")
-  public String addNewUser(@RequestBody UserInfo userInfo){
-    return userInfoService.addUser(userInfo);
+  public String addNewUser(@RequestBody SignupRequest signupRequest){
+    return userInfoService.addUser(signupRequest);
   }
 
   @PostMapping("/generateToken")

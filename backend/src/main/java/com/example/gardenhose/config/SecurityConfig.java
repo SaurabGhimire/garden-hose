@@ -24,8 +24,6 @@ import org.springframework.security.web.authentication.UsernamePasswordAuthentic
 public class SecurityConfig {
   @Autowired
   private  UserDetailsService userDetailsService;
-  @Autowired
-  private JwtAuthFilter jwtAuthFilter;
 
 
   @Bean
@@ -33,12 +31,17 @@ public class SecurityConfig {
     http.csrf(csrf -> csrf.disable())
       .authorizeHttpRequests(
         auth -> auth.requestMatchers("/auth/**").permitAll()
+          .requestMatchers(
+            "/swagger-ui/**",
+            "/v3/api-docs/**",
+            "/swagger-ui.html"
+          ).permitAll()
           .requestMatchers("/user/**").hasAuthority("ROLE_USER")
           .requestMatchers("/admin/**").hasAuthority("ROLE_ADMIN")
           .anyRequest().authenticated()
       ).sessionManagement(sess -> sess.sessionCreationPolicy(SessionCreationPolicy.STATELESS))
       .authenticationProvider(authenticationProvider())
-      .addFilterBefore(jwtAuthFilter, UsernamePasswordAuthenticationFilter.class);
+      .addFilterBefore(jwtAuthFilter(), UsernamePasswordAuthenticationFilter.class);
     return http.build();
   }
 
@@ -64,6 +67,4 @@ public class SecurityConfig {
   public JwtAuthFilter jwtAuthFilter(){
     return new JwtAuthFilter();
   }
-
-
 }

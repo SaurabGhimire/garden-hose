@@ -1,5 +1,6 @@
 package com.example.gardenhose.services;
 
+import com.example.gardenhose.entity.SignupRequest;
 import com.example.gardenhose.entity.UserInfo;
 import com.example.gardenhose.repositories.UserInfoRepository;
 import lombok.RequiredArgsConstructor;
@@ -12,6 +13,7 @@ import org.springframework.security.core.userdetails.UserDetailsService;
 import org.springframework.security.core.userdetails.UsernameNotFoundException;
 import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.stereotype.Service;
+import org.springframework.transaction.annotation.Transactional;
 
 import java.util.List;
 import java.util.Optional;
@@ -39,8 +41,12 @@ public class UserInfoService implements UserDetailsService {
     return new User(user.getEmail(), user.getPassword(), user.getAuthorities());
   }
 
-  public String addUser(UserInfo userInfo){
-    userInfo.setPassword(passwordEncoder.encode(userInfo.getPassword()));
+  public String addUser(SignupRequest signupRequest){
+    UserInfo userInfo = new UserInfo();
+    userInfo.setName(signupRequest.getName());
+    userInfo.setEmail(signupRequest.getName());
+    userInfo.setPassword(passwordEncoder.encode(signupRequest.getPassword()));
+    userInfo.setRoles(signupRequest.getRoles());
     repository.save(userInfo);
     return  "User added successfully";
   }

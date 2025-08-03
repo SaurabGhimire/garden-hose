@@ -1,5 +1,7 @@
 package com.example.gardenhose.entity;
 
+import com.fasterxml.jackson.annotation.JsonIgnore;
+import io.swagger.v3.oas.annotations.Hidden;
 import jakarta.persistence.Entity;
 import jakarta.persistence.GeneratedValue;
 import jakarta.persistence.GenerationType;
@@ -26,8 +28,8 @@ public class UserInfo {
   private String password;
   private String roles;
 
-
-
+  @JsonIgnore
+  @Hidden
   public List<GrantedAuthority> getAuthorities(){
     return List.of(getRoles().split(","))
       .stream()
